@@ -1,0 +1,71 @@
+<!DOCTYPE html PUBLIC "-//WAPFORUM//DTD XHTML Mobile 1.0//EN" "http://www.wapforum.org/DTD/xhtml-mobile10.dtd\">
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<h1>Real Time chat with MQTT</h1>
+<script src="https://cdn.socket.io/socket.io-1.3.5.js"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
+<script src="jquery/iphone-style-checkboxes.js"></script>
+<link rel="stylesheet" href="style.css">
+<script>
+  $(document).ready(function() {
+ //        $('#checkbox').change(
+ // function(elem,val) {
+ //                if (val) {
+ //                    socket.emit('publish', {topic:"led",payload:"on"});
+ //                } else {
+ //                    socket.emit('publish', {topic:"led",payload:"off"});
+ //                }
+ //            }
+ //        );
+
+$("#send").click(function(){
+
+var message=$("#type_msg").val();
+socket.emit('publish', {topic:"chat",payload:message});
+
+})
+
+    });
+</script>
+<script>
+  var socket = io.connect('127.0.0.1:7000');
+  socket.on('connect', function () {
+    socket.on('mqtt', function (msg) {
+      console.log(msg.topic+' '+msg.payload);
+      // if (msg.payload == "off") {
+      //   if ($('input[name=led]').is(':checked')) {
+      //     $('input[name=led]').prop('checked',false).change();
+      //   }
+      // }
+      // if (msg.payload == "on") {
+      //   if (!$('input[name=led]').is(':checked')) {
+      //     $('input[name=led]').prop('checked',true).change();
+      //   }
+      // }
+      var data=$("#test_data").html();
+      $("#test_data").html(data+'<div>'+msg.payload+'</div>');
+    });
+    socket.emit('subscribe',{topic:'chat'});
+  });
+</script>
+</head>
+
+<body>
+  <div class='table'>
+    <table>
+      <tr>
+        <td style='vertical-align: middle !important;'>
+Chat app
+        </td>
+        <td>
+          <!-- <input name="led" checked='checked' id="checkbox" class='yesno' type='checkbox' /> -->
+          <input type="text" id="type_msg">
+          <input type="button" id="send" value="submit chat">
+          <div id="test_data"></div>
+        </td>
+      </tr>
+    </table>
+  </div>
+</body>
+</html>
